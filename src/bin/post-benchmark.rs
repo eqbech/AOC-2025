@@ -13,7 +13,7 @@ fn main() {
         "Part 2 runtime".to_string(),
     ]);
 
-    for day in 1..=25 {
+    for day in 1..=12 {
         let part1_path = format!("{}/AOC day {}/Solution one/base/estimates.json", path, day);
         let part2_path = format!("{}/AOC day {}/Solution two/base/estimates.json", path, day);
 
