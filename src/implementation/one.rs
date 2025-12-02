@@ -73,42 +73,42 @@ fn parse_input(input: &[String]) -> Vec<(Direction, u32)> {
     }).collect()
 }
 
-// #[cfg(test)]
-// mod tests {
-//     use super::*;
-//     use std::fs;
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use std::fs;
 
-//     #[test]
-//     fn test_part_one() {
-//         let test_vec = 
-//             fs::read_to_string("data/test/day_1.txt")
-//                 .map(|data| {
-//                     data.lines()
-//                         .map(|line| line.to_string())
-//                         .collect::<Vec<String>>()
-//                 })
-//                 .unwrap();
+    #[test]
+    fn test_part_one() {
+        let test_vec = 
+            fs::read_to_string("data/test/day_1.txt")
+                .map(|data| {
+                    data.lines()
+                        .map(|line| line.to_string())
+                        .collect::<Vec<String>>()
+                })
+                .unwrap();
 
-//         let day_four = DayOneSolution { data: parse_input(&test_vec) };
-//         let sol = day_four.part_one();
+        let day_four = DayOneSolution { data: parse_input(&test_vec) };
+        let sol = day_four.part_one();
 
-//         assert_eq!(3, sol);
-//     }
+        assert_eq!(3, sol);
+    }
 
-//     #[test]
-//     fn test_part_two() {
-//         let test_vec = 
-//             fs::read_to_string("data/test/day_1.txt")
-//                 .map(|data| {
-//                     data.lines()
-//                         .map(|line| line.to_string())
-//                         .collect::<Vec<String>>()
-//                 })
-//                 .unwrap();
+    #[test]
+    fn test_part_two() {
+        let test_vec = 
+            fs::read_to_string("data/test/day_1.txt")
+                .map(|data| {
+                    data.lines()
+                        .map(|line| line.to_string())
+                        .collect::<Vec<String>>()
+                })
+                .unwrap();
 
-//         let day_four = DayOneSolution { data: parse_input(&test_vec) };
-//         let sol = day_four.part_two();
+        let day_four = DayOneSolution { data: parse_input(&test_vec) };
+        let sol = day_four.part_two();
 
-//         assert_eq!(6, sol);
-//     }
-// }
+        assert_eq!(6, sol);
+    }
+}
