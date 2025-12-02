@@ -81,7 +81,7 @@ mod tests {
     #[test]
     fn test_part_one() {
         let test_vec = 
-            fs::read_to_string("data/test/day_1.txt")
+            fs::read_to_string("data/test/test_1.txt")
                 .map(|data| {
                     data.lines()
                         .map(|line| line.to_string())
@@ -98,7 +98,7 @@ mod tests {
     #[test]
     fn test_part_two() {
         let test_vec = 
-            fs::read_to_string("data/test/day_1.txt")
+            fs::read_to_string("data/test/test_1.txt")
                 .map(|data| {
                     data.lines()
                         .map(|line| line.to_string())
