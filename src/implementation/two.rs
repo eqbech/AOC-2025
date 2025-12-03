@@ -27,11 +27,12 @@ impl Solution for DayTwoSolution {
                     i = 10_u64.pow(str_num.len() as u32);
                     continue;
                 }
-                // Check if first halv is equal to last half
+                // Check if first half is equal to last half
                 let mid = str_num.len() / 2;
-                if &str_num[..mid] == &str_num[mid..] {
+                if str_num[..mid] == str_num[mid..] {
                     sum += i;
-                    i = i + 10_u64.pow(mid as u32);
+                    i += 10_u64.pow(mid as u32);
+                    continue;
                 }
                 i += 1;
             }
@@ -42,32 +43,27 @@ impl Solution for DayTwoSolution {
     fn part_two(&self) -> u64 {
         let mut sum = 0;
         for (a, b) in &self.data {
-            for i in *a..=*b {
-                let str_num = i.to_string();
-                if is_valid_id_part_two(&str_num) {
+            let mut i = *a;
+            while i <= *b {
+                if is_valid_id_part_two(&i.to_string().chars().collect::<Vec<char>>()) {
                     sum += i;
                 }
+                i += 1;
             }
         }
         sum
     }
-
 }
 
-fn is_valid_id_part_two(id: &str) -> bool {
-    if id.len() < 2 {
+fn is_valid_id_part_two(digits: &[char]) -> bool {
+    if digits.len() < 2 {
         return false;
     }
-    let first_char = id.chars().next().unwrap();
-    if id.chars().all(|c| c == first_char) {
-        return true
+    if digits.iter().all(|&c| c == digits[0]) {
+        return true;
     }
-    
-    let even_divisors = (2..id.len()).filter(|x| id.len() % x == 0).collect::<Vec<usize>>();
-    for div in even_divisors {
-        let mid = id.len() / div;
-        let part = &id[..mid];
-        if id.chars().collect::<Vec<char>>().chunks(mid).all(|chunk| chunk.iter().collect::<String>() == part) {
+    for div in 2..=digits.len() / 2 {
+        if digits.len().is_multiple_of(div) && digits.chunks(div).all(|c| *c == digits[0..div]) {
             return true;
         }
     }
@@ -75,12 +71,15 @@ fn is_valid_id_part_two(id: &str) -> bool {
 }
 
 fn parse_input(input: &str) -> Vec<(u64, u64)> {
-    input.split(',').map(|s| {
-        let mut parts = s.trim().split('-');
-        let first = parts.next().unwrap().parse::<u64>().unwrap();
-        let second = parts.next().unwrap().parse::<u64>().unwrap();
-        (first, second)
-    }).collect()
+    input
+        .split(',')
+        .map(|s| {
+            let mut parts = s.trim().split('-');
+            let first = parts.next().unwrap().parse::<u64>().unwrap();
+            let second = parts.next().unwrap().parse::<u64>().unwrap();
+            (first, second)
+        })
+        .collect()
 }
 
 #[cfg(test)]
@@ -90,20 +89,22 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_string = 
-            fs::read_to_string("data/test/test_2.txt").unwrap();
+        let test_string = fs::read_to_string("data/test/test_2.txt").unwrap();
 
-        let day_two = DayTwoSolution { data: parse_input(&test_string) };
+        let day_two = DayTwoSolution {
+            data: parse_input(&test_string),
+        };
         let sol = day_two.part_one();
         assert_eq!(1227775554, sol);
     }
 
     #[test]
     fn test_part_two() {
-        let test_string = 
-            fs::read_to_string("data/test/test_2.txt").unwrap();
+        let test_string = fs::read_to_string("data/test/test_2.txt").unwrap();
 
-        let day_two = DayTwoSolution { data: parse_input(&test_string) };
+        let day_two = DayTwoSolution {
+            data: parse_input(&test_string),
+        };
         let sol = day_two.part_two();
 
         assert_eq!(4174379265, sol);

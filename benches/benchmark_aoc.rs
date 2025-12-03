@@ -1,8 +1,9 @@
 use aoc_2025::{
-    Solution, implementation::{one::DayOneSolution, three::DayThreeSolution, two::DayTwoSolution}
+    Solution,
+    implementation::{one::DayOneSolution, three::DayThreeSolution, two::DayTwoSolution},
 };
 
-use criterion::{criterion_group, criterion_main, Criterion};
+use criterion::{Criterion, criterion_group, criterion_main};
 
 fn benchmark_aoc_day_one(c: &mut Criterion) {
     let day_one = DayOneSolution::new();
