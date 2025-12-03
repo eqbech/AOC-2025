@@ -16,17 +16,24 @@ impl Solution for DayTwoSolution {
     fn part_one(&self) -> u64 {
         let mut sum = 0;
         for (a, b) in &self.data {
-            for i in *a..=*b {
+            if a.to_string().len() == b.to_string().len() && a.to_string().len() % 2 != 0 {
+                continue;
+            }
+            let mut i = *a;
+            while i <= *b {
                 let str_num = i.to_string();
-                // if it has odd length, invalid ID
+                // if it has odd length, skip to when it is even
                 if str_num.len() % 2 != 0 {
+                    i = 10_u64.pow(str_num.len() as u32);
                     continue;
                 }
                 // Check if first halv is equal to last half
                 let mid = str_num.len() / 2;
                 if &str_num[..mid] == &str_num[mid..] {
                     sum += i;
+                    i = i + 10_u64.pow(mid as u32);
                 }
+                i += 1;
             }
         }
         sum
