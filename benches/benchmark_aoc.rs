@@ -1,5 +1,5 @@
 use aoc_2025::{
-    Solution, implementation::{one::DayOneSolution, two::DayTwoSolution}
+    Solution, implementation::{one::DayOneSolution, three::DayThreeSolution, two::DayTwoSolution}
 };
 
 use criterion::{criterion_group, criterion_main, Criterion};
@@ -22,9 +22,19 @@ fn benchmark_aoc_day_two(c: &mut Criterion) {
     group.finish();
 }
 
+fn benchmark_aoc_day_three(c: &mut Criterion) {
+    let day_three = DayThreeSolution::new();
+    let mut group = c.benchmark_group("AOC day 3");
+
+    group.bench_function("Solution one", |b| b.iter(|| day_three.part_one()));
+    group.bench_function("Solution two", |b| b.iter(|| day_three.part_two()));
+    group.finish();
+}
+
 criterion_group!(
     benches,
     benchmark_aoc_day_one,
-    benchmark_aoc_day_two
+    benchmark_aoc_day_two,
+    benchmark_aoc_day_three
 );
 criterion_main!(benches);
