@@ -7,7 +7,7 @@ enum Direction {
 }
 
 pub struct DayOneSolution {
-    data: Vec<(Direction, u32)>,
+    data: Vec<(Direction, i32)>,
 }
 
 impl Solution for DayOneSolution {
@@ -25,10 +25,10 @@ impl Solution for DayOneSolution {
         for (dir, amount) in &self.data {
             match dir {
                 Direction::L => {
-                    position -= *amount as i32;
+                    position -= *amount;
                 }
                 Direction::R => {
-                    position += *amount as i32;
+                    position += *amount;
                 }
             }
             if (position == 0) || (position.abs() % 100 == 0) {
@@ -45,9 +45,9 @@ impl Solution for DayOneSolution {
             match dir {
                 Direction::L => {
                     let new_pos = if position == 0 {
-                        *amount as i32
+                        *amount
                     } else {
-                        *amount as i32 + (100 - position)
+                        *amount + (100 - position)
                     };
                     count += new_pos / 100;
                     position = 100 - (new_pos % 100);
@@ -67,7 +67,7 @@ impl Solution for DayOneSolution {
     }
 }
 
-fn parse_input(input: &[String]) -> Vec<(Direction, u32)> {
+fn parse_input(input: &[String]) -> Vec<(Direction, i32)> {
     input
         .iter()
         .map(|s| {
@@ -77,7 +77,7 @@ fn parse_input(input: &[String]) -> Vec<(Direction, u32)> {
                 'R' => Direction::R,
                 _ => panic!("Unknown direction: {}", parts[0]),
             };
-            let amount: u32 = parts[1..].iter().collect::<String>().parse().unwrap();
+            let amount: i32 = parts[1..].iter().collect::<String>().parse().unwrap();
             (dir, amount)
         })
         .collect()

@@ -1,7 +1,7 @@
 use crate::Solution;
 
 pub struct DayThreeSolution {
-    data: Vec<String>,
+    data: Vec<Vec<u8>>,
 }
 
 impl Solution for DayThreeSolution {
@@ -9,7 +9,7 @@ impl Solution for DayThreeSolution {
 
     fn new() -> Self {
         DayThreeSolution {
-            data: Self::read_data_to_vec().unwrap(),
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
         }
     }
 
@@ -17,29 +17,27 @@ impl Solution for DayThreeSolution {
         // Sum two batteries in each pack
         let mut sum = 0;
         for pack in &self.data {
-            let pack_chars: Vec<char> = pack.chars().collect();
-            let mut first_digit = 0;
-            let mut last_digit = 0;
+            let mut first_digit = b'0';
+            let mut last_digit = b'0';
             let mut first_digit_pos = 0;
-            for i in 0..pack_chars.len() - 1 {
-                if pack_chars[i].to_digit(10).unwrap() > first_digit {
-                    first_digit = pack_chars[i].to_digit(10).unwrap();
+            for i in 0..pack.len() - 1 {
+                if pack[i] > first_digit {
+                    first_digit = pack[i];
                     first_digit_pos = i;
-                    if pack_chars[i] == '9' {
+                    if pack[i] == b'9' {
                         break;
                     }
                 }
             }
-            for j in (first_digit_pos + 1)..pack_chars.len() {
-                if pack_chars[j].to_digit(10).unwrap() > last_digit {
-                    last_digit = pack_chars[j].to_digit(10).unwrap();
-                    if pack_chars[j] == '9' {
+            for j in (first_digit_pos + 1)..pack.len() {
+                if pack[j] > last_digit {
+                    last_digit = pack[j];
+                    if pack[j] == b'9' {
                         break;
                     }
                 }
             }
-            sum += format!("{}{}", first_digit, last_digit)
-                .parse::<u32>()
+            sum += [first_digit as char, last_digit as char].iter().collect::<String>().parse::<u32>()
                 .unwrap();
         }
         sum
@@ -48,33 +46,35 @@ impl Solution for DayThreeSolution {
     fn part_two(&self) -> u64 {
         // Sum twelve batteries in each pack
         let mut sum = 0;
-        let mut digits_vec: Vec<(u64, usize)> = (0..12).map(|_| (0, 0)).collect();
+        let mut digits_vec: Vec<(u8, usize)> = (0..12).map(|_| (0, 0)).collect();
         const CAPACITY: usize = 12;
 
         for pack in &self.data {
-            let pack_chars: Vec<char> = pack.chars().collect();
             for vec_i in 0..digits_vec.len() {
                 let l = if vec_i == 0 {
                     0
                 } else {
                     digits_vec[vec_i - 1].1 + 1
                 };
-                for i in l..(pack_chars.len() - (CAPACITY - (vec_i + 1))) {
-                    let digit = pack_chars[i].to_digit(10).unwrap() as u64;
-                    if digit > digits_vec[vec_i].0 {
-                        digits_vec[vec_i] = (digit, i);
-                        if digit == 9 {
+                for i in l..(pack.len() - (CAPACITY - (vec_i + 1))) {
+                    if pack[i] > digits_vec[vec_i].0 {
+                        digits_vec[vec_i] = (pack[i], i);
+                        if pack[i] == b'9' {
                             break;
                         }
                     }
                 }
             }
-            let pack_sum: String = digits_vec.iter().map(|(d, _)| d.to_string()).collect();
+            let pack_sum: String = digits_vec.iter().map(|(d, _)| *d as char).collect();
             sum += pack_sum.parse::<u64>().unwrap();
-            digits_vec.fill((0, 0));
+            digits_vec.fill((b'0', 0));
         }
         sum
     }
+}
+
+fn parse_input(input: &Vec<String>) -> Vec<Vec<u8>> {
+    input.iter().map(|s| s.as_bytes().to_owned()).collect()
 }
 
 #[cfg(test)]
@@ -92,7 +92,7 @@ mod tests {
             })
             .unwrap();
 
-        let day_three = DayThreeSolution { data: test_vec };
+        let day_three = DayThreeSolution { data: parse_input(&test_vec) };
         let sol = day_three.part_one();
 
         assert_eq!(357, sol);
@@ -108,8 +108,8 @@ mod tests {
             })
             .unwrap();
 
-        let day_four = DayThreeSolution { data: test_vec };
-        let sol = day_four.part_two();
+        let day_three = DayThreeSolution { data: parse_input(&test_vec) };
+        let sol = day_three.part_two();
 
         assert_eq!(3121910778619, sol);
     }
