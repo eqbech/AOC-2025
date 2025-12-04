@@ -56,7 +56,12 @@ fn main() {
     // Write to README.md
     let readme_path = "README.md";
     let content = fs::read_to_string(readme_path).expect("Could not read README.md");
-    let updated_content = content + "\n\n### Benchmark Results\n\n" + &table;
+    let refined_contents = content
+        .split("\n\n### Benchmark Results\n\n")
+        .next()
+        .unwrap_or("")
+        .to_string();
+    let updated_content = refined_contents + "\n\n### Benchmark Results\n\n" + &table;
     fs::write(readme_path, updated_content).expect("Could not write README.md");
 }
 
