@@ -29,12 +29,19 @@ impl Solution for DayTwoSolution {
                 }
                 // Check if first half is equal to last half
                 let mid = str_num.len() / 2;
-                if str_num[..mid] == str_num[mid..] {
+                let (first, second) = (str_num[..mid].parse::<u64>().unwrap(), str_num[mid..].parse::<u64>().unwrap());
+                if first == second {
                     sum += i;
                     i += 10_u64.pow(mid as u32);
                     continue;
                 }
-                i += 1;
+                if first > second {
+                    // Move to next possible valid number
+                    i += first - second;
+                    continue;
+                }
+                // Move to next possible valid number
+                i += 10_u64.pow(mid as u32) - (second - first);
             }
         }
         sum

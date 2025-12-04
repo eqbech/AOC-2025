@@ -109,28 +109,28 @@ impl Solution for DayFourSolution {
                     }
                     // Right
                     if x < grid[y].len() - 1 && grid[y][x + 1] == PAPER_ROLL {
-                        if _roll_count == 3 {
+                        if _roll_count == 3 {     
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom Left
                     if y < grid.len() - 1 && x > 0 && grid[y + 1][x - 1] == PAPER_ROLL {
-                        if _roll_count == 3 {
+                        if _roll_count == 3 {    
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom
                     if y < grid.len() - 1 && grid[y + 1][x] == PAPER_ROLL {
-                        if _roll_count == 3 {
+                        if _roll_count == 3 {      
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom Right
                     if y < grid.len() - 1 && x < grid[y].len() - 1 && grid[y + 1][x + 1] == PAPER_ROLL {
-                        if _roll_count == 3 {
+                        if _roll_count == 3 {   
                             continue;
                         }
                     }
