@@ -50,11 +50,14 @@ impl Solution for DayTwoSolution {
     fn part_two(&self) -> u64 {
         let mut sum = 0;
         for (a, b) in &self.data {
+            let mut pre_alloc_vec: Vec<u8> = Vec::with_capacity(*b as usize);
             let mut i = *a;
             while i <= *b {
-                if is_valid_id_part_two(&i.to_string().chars().collect::<Vec<char>>()) {
+                i.to_string().bytes().for_each(|b| pre_alloc_vec.push(b));
+                if is_valid_id_part_two(&pre_alloc_vec) {
                     sum += i;
                 }
+                pre_alloc_vec.clear();
                 i += 1;
             }
         }
@@ -62,7 +65,7 @@ impl Solution for DayTwoSolution {
     }
 }
 
-fn is_valid_id_part_two(digits: &[char]) -> bool {
+fn is_valid_id_part_two(digits: &[u8]) -> bool {
     if digits.len() < 2 {
         return false;
     }
