@@ -13,22 +13,20 @@ impl Solution for DayFiveSolution {
 
     fn part_one(&self) -> u32 {
         let mut sum = 0;
-        let mut ranges_sorted = self.data.0.clone();
-        ranges_sorted.sort_by(|a, b| a.0.cmp(&b.0));
         for id in &self.data.1 {
-            let mut l = ranges_sorted.len() / 2;
+            let mut l = self.data.0.len() / 2;
             let mut r = l + 1;
             loop {
-                if *id >= ranges_sorted[l].0 && *id <= ranges_sorted[l].1 
-                || *id >= ranges_sorted[r].0 && *id <= ranges_sorted[r].1 {
+                if *id >= self.data.0[l].0 && *id <= self.data.0[l].1 
+                || *id >= self.data.0[r].0 && *id <= self.data.0[r].1 {
                     sum += 1;
                     break;
                 }
-                if l == 0 && r == ranges_sorted.len() - 1 {
+                if l == 0 && r == self.data.0.len() - 1 {
                     break;
                 }
                 l = if l > 0 { l - 1 } else { 0 };
-                r = if r < ranges_sorted.len() - 1 { r + 1 } else { ranges_sorted.len() - 1 };
+                r = if r < self.data.0.len() - 1 { r + 1 } else { self.data.0.len() - 1 };
             }
         }
         sum
