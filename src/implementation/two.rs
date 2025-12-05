@@ -29,7 +29,10 @@ impl Solution for DayTwoSolution {
                 }
                 // Check if first half is equal to last half
                 let mid = str_num.len() / 2;
-                let (first, second) = (str_num[..mid].parse::<u64>().unwrap(), str_num[mid..].parse::<u64>().unwrap());
+                let (first, second) = (
+                    str_num[..mid].parse::<u64>().unwrap(),
+                    str_num[mid..].parse::<u64>().unwrap(),
+                );
                 if first == second {
                     sum += i;
                     i += 10_u64.pow(mid as u32);

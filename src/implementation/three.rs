@@ -37,7 +37,10 @@ impl Solution for DayThreeSolution {
                     }
                 }
             }
-            sum += [first_digit as char, last_digit as char].iter().collect::<String>().parse::<u32>()
+            sum += [first_digit as char, last_digit as char]
+                .iter()
+                .collect::<String>()
+                .parse::<u32>()
                 .unwrap();
         }
         sum
@@ -92,7 +95,9 @@ mod tests {
             })
             .unwrap();
 
-        let day_three = DayThreeSolution { data: parse_input(&test_vec) };
+        let day_three = DayThreeSolution {
+            data: parse_input(&test_vec),
+        };
         let sol = day_three.part_one();
 
         assert_eq!(357, sol);
@@ -108,7 +113,9 @@ mod tests {
             })
             .unwrap();
 
-        let day_three = DayThreeSolution { data: parse_input(&test_vec) };
+        let day_three = DayThreeSolution {
+            data: parse_input(&test_vec),
+        };
         let sol = day_three.part_two();
 
         assert_eq!(3121910778619, sol);

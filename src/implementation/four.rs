@@ -10,7 +10,9 @@ impl Solution for DayFourSolution {
     const DAY: u8 = 4;
 
     fn new() -> Self {
-        DayFourSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
+        DayFourSolution {
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
+        }
     }
 
     fn part_one(&self) -> u32 {
@@ -63,13 +65,15 @@ impl Solution for DayFourSolution {
                     _roll_count += 1;
                 }
                 // Bottom Right
-                if y < self.data.len() - 1 && x < self.data[y].len() - 1 && self.data[y + 1][x + 1] == PAPER_ROLL {
+                if y < self.data.len() - 1
+                    && x < self.data[y].len() - 1
+                    && self.data[y + 1][x + 1] == PAPER_ROLL
+                {
                     if _roll_count == 3 {
                         continue;
                     }
                 }
                 total_rolls += 1;
-
             }
         }
 
@@ -109,28 +113,31 @@ impl Solution for DayFourSolution {
                     }
                     // Right
                     if x < grid[y].len() - 1 && grid[y][x + 1] == PAPER_ROLL {
-                        if _roll_count == 3 {     
+                        if _roll_count == 3 {
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom Left
                     if y < grid.len() - 1 && x > 0 && grid[y + 1][x - 1] == PAPER_ROLL {
-                        if _roll_count == 3 {    
+                        if _roll_count == 3 {
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom
                     if y < grid.len() - 1 && grid[y + 1][x] == PAPER_ROLL {
-                        if _roll_count == 3 {      
+                        if _roll_count == 3 {
                             continue;
                         }
                         _roll_count += 1;
                     }
                     // Bottom Right
-                    if y < grid.len() - 1 && x < grid[y].len() - 1 && grid[y + 1][x + 1] == PAPER_ROLL {
-                        if _roll_count == 3 {   
+                    if y < grid.len() - 1
+                        && x < grid[y].len() - 1
+                        && grid[y + 1][x + 1] == PAPER_ROLL
+                    {
+                        if _roll_count == 3 {
                             continue;
                         }
                     }
