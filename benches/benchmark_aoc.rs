@@ -73,11 +73,11 @@ fn benchmark_aoc_day_six(c: &mut Criterion) {
 
 criterion_group!(
     benches,
-    // benchmark_aoc_day_one,
-    // benchmark_aoc_day_two,
-    // benchmark_aoc_day_three,
-    // benchmark_aoc_day_four,
-    // benchmark_aoc_day_five,
+    benchmark_aoc_day_one,
+    benchmark_aoc_day_two,
+    benchmark_aoc_day_three,
+    benchmark_aoc_day_four,
+    benchmark_aoc_day_five,
     benchmark_aoc_day_six,
 );
 criterion_main!(benches);
