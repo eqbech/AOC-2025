@@ -16,22 +16,24 @@ impl Solution for DayTwoSolution {
     fn part_one(&self) -> u64 {
         let mut sum = 0;
         for (a, b) in &self.data {
-            if a.to_string().len() == b.to_string().len() && a.to_string().len() % 2 != 0 {
+            let a_len = a.checked_ilog10().unwrap_or(0) + 1;
+            let b_len = b.checked_ilog10().unwrap_or(0) + 1;
+            if a_len == b_len && a_len % 2 != 0 {
                 continue;
             }
             let mut i = *a;
             while i <= *b {
-                let str_num = i.to_string();
                 // if it has odd length, skip to when it is even
-                if str_num.len() % 2 != 0 {
-                    i = 10_u64.pow(str_num.len() as u32);
+                let number_len = i.checked_ilog10().unwrap_or(0) + 1;
+                let mid = number_len / 2;
+                if number_len % 2 != 0 {
+                    i = 10_u64.pow(number_len);
                     continue;
                 }
                 // Check if first half is equal to last half
-                let mid = str_num.len() / 2;
                 let (first, second) = (
-                    str_num[..mid].parse::<u64>().unwrap(),
-                    str_num[mid..].parse::<u64>().unwrap(),
+                    i / 10_u64.pow(mid as u32),
+                    i % 10_u64.pow(mid as u32),
                 );
                 if first == second {
                     sum += i;
