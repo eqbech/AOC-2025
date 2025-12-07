@@ -62,14 +62,14 @@ fn benchmark_aoc_day_six(c: &mut Criterion) {
     group.finish();
 }
 
-// fn benchmark_aoc_day_seven(c: &mut Criterion) {
-//     let day_seven = DaySevenSolution::new();
-//     let mut group = c.benchmark_group("AOC day 7");
+fn benchmark_aoc_day_seven(c: &mut Criterion) {
+    let day_seven = DaySevenSolution::new();
+    let mut group = c.benchmark_group("AOC day 7");
 
-//     group.bench_function("Solution one", |b| b.iter(|| day_seven.part_one()));
-//     group.bench_function("Solution two", |b| b.iter(|| day_seven.part_two()));
-//     group.finish();
-// }
+    group.bench_function("Solution one", |b| b.iter(|| day_seven.part_one()));
+    group.bench_function("Solution two", |b| b.iter(|| day_seven.part_two()));
+    group.finish();
+}
 
 criterion_group!(
     benches,
@@ -79,5 +79,6 @@ criterion_group!(
     benchmark_aoc_day_four,
     benchmark_aoc_day_five,
     benchmark_aoc_day_six,
+    benchmark_aoc_day_seven,
 );
 criterion_main!(benches);
