@@ -110,12 +110,11 @@ impl Solution for DayEightSolution {
         let mut circuits: Vec<HashSet<JunctionBox>> = Vec::new();
         let connections = find_shortest_connections(&self.data);
 
-        let mut circuit_len = 1;
         let (mut x1, mut x2) = (connections[0].0.x, connections[0].1.x);
         circuits.push(HashSet::from([connections[0].0, connections[0].1]));
         'outer: for set in connections.iter().skip(1) {
             let mut i = 0;
-            while i < circuit_len {
+            while i < circuits.len() {
                 if circuits[i].contains(&set.0) && circuits[i].contains(&set.1) {
                     continue 'outer;
                 }
@@ -128,8 +127,7 @@ impl Solution for DayEightSolution {
                             for item in to_merge {
                                 current_set.insert(item);
                             }
-                            circuit_len -= 1;
-                            if circuit_len == 1 {
+                            if circuits.len() == 1 && circuits[0].len() == self.data.len() {
                                 x1 = set.0.x;
                                 x2 = set.1.x;
                                 break 'outer;
@@ -147,8 +145,7 @@ impl Solution for DayEightSolution {
                             for item in to_merge {
                                 current_set.insert(item);
                             }
-                            circuit_len -= 1;
-                            if circuit_len == 1 {
+                            if circuits.len() == 1 && circuits[0].len() == self.data.len() {
                                 x1 = set.0.x;
                                 x2 = set.1.x;
                                 break 'outer;
@@ -160,12 +157,16 @@ impl Solution for DayEightSolution {
                 if circuits[i].contains(&set.0) || circuits[i].contains(&set.1) {
                     circuits[i].insert(set.0);
                     circuits[i].insert(set.1);
+                    if circuits.len() == 1 && circuits[0].len() == self.data.len() {
+                        x1 = set.0.x;
+                        x2 = set.1.x;
+                        break 'outer;
+                    }
                     continue 'outer;
                 }
                 i += 1;
             }
             circuits.push(HashSet::from([set.0, set.1]));
-            circuit_len += 1;
         }
         x1 * x2
 
