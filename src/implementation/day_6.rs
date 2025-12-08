@@ -32,12 +32,12 @@ impl Solution for DaySixSolution {
     fn part_two(&self) -> u64 {
         let mut sum = 0u64;
         let data = parse_input_2(&self.data);
-        // println!("Data for p2: {:?}", data);
+        
         for col in &data {
             let operation = col.last().unwrap().chars().filter(|c| !c.is_whitespace()).next().unwrap();
             let mut res = if operation == '+' { 0 } else { 1 };
             let mut val_arr = (0..col.first().unwrap().len()).map(|_| "".to_string()).collect::<Vec<String>>();
-            // println!("Operation: {}", operation);
+            
             for &val in col.iter().take(col.len() - 1) {
                 for (i, c) in val.chars().enumerate() {
                     if c.is_whitespace() {
