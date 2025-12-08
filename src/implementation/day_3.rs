@@ -20,28 +20,29 @@ impl Solution for DayThreeSolution {
             let mut first_digit = b'0';
             let mut last_digit = b'0';
             let mut first_digit_pos = 0;
-            for i in 0..pack.len() - 1 {
-                if pack[i] > first_digit {
+            let mut i = 0;
+            while i < pack.len() {
+                if first_digit == b'9' {
+                    if last_digit == b'9' {
+                        break;
+                    }
+                    if pack[i] > last_digit {
+                        last_digit = pack[i];
+                    }
+                }
+                if pack[i] > first_digit && i != pack.len() -1 {
                     first_digit = pack[i];
                     first_digit_pos = i;
-                    if pack[i] == b'9' {
-                        break;
-                    }
+                    last_digit = b'0';
+                    i += 1;
+                    continue;
                 }
-            }
-            for j in (first_digit_pos + 1)..pack.len() {
-                if pack[j] > last_digit {
-                    last_digit = pack[j];
-                    if pack[j] == b'9' {
-                        break;
-                    }
+                if pack[i] > last_digit && i > first_digit_pos {
+                    last_digit = pack[i];
                 }
+                i += 1;
             }
-            sum += [first_digit as char, last_digit as char]
-                .iter()
-                .collect::<String>()
-                .parse::<u32>()
-                .unwrap();
+            sum += (first_digit as char).to_digit(10).unwrap() * 10 + (last_digit as char).to_digit(10).unwrap();
         }
         sum
     }
@@ -68,8 +69,11 @@ impl Solution for DayThreeSolution {
                     }
                 }
             }
-            let pack_sum: String = digits_vec.iter().map(|(d, _)| *d as char).collect();
-            sum += pack_sum.parse::<u64>().unwrap();
+            let mut pack_sum: u64 = 0;
+            for i in 0..digits_vec.len() {
+                pack_sum += (digits_vec[i].0 as char).to_digit(10).unwrap() as u64 * 10_u64.pow((digits_vec.len() - 1 - i) as u32);
+            }
+            sum += pack_sum;
             digits_vec.fill((b'0', 0));
         }
         sum

@@ -112,18 +112,18 @@ impl<'a> AdventOfCodeSolver<'a> {
     pub fn new() -> Self {
         AdventOfCodeSolver {
             solutions: &[
-                || one::DayOneSolution::new().solve(),
-                || two::DayTwoSolution::new().solve(),
-                || three::DayThreeSolution::new().solve(),
-                || four::DayFourSolution::new().solve(),
-                || five::DayFiveSolution::new().solve(),
-                || six::DaySixSolution::new().solve(),
-                || seven::DaySevenSolution::new().solve(),
-                || eight::DayEightSolution::new().solve(),
-                || nine::DayNineSolution::new().solve(),
-                || ten::DayTenSolution::new().solve(),
-                || eleven::DayElevenSolution::new().solve(),
-                || twelve::DayTwelveSolution::new().solve(),
+                || day_1::DayOneSolution::new().solve(),
+                || day_2::DayTwoSolution::new().solve(),
+                || day_3::DayThreeSolution::new().solve(),
+                || day_4::DayFourSolution::new().solve(),
+                || day_5::DayFiveSolution::new().solve(),
+                || day_6::DaySixSolution::new().solve(),
+                || day_7::DaySevenSolution::new().solve(),
+                || day_8::DayEightSolution::new().solve(),
+                || day_9::DayNineSolution::new().solve(),
+                || day_10::DayTenSolution::new().solve(),
+                || day_11::DayElevenSolution::new().solve(),
+                || day_12::DayTwelveSolution::new().solve(),
             ],
         }
     }
