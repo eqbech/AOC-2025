@@ -24,9 +24,7 @@ impl Solution for DayOneSolution {
         let mut position: i32 = 50;
         for (dir, amount) in &self.data {
             position += if *dir == Direction::R {*amount} else {-*amount};
-            position += if position < 0 { 100 } else { 0 };
-            position -= if position >= 100 { 100 } else { 0 };
-            count += (position == 0) as u32;
+            count += (position % 100 == 0) as u32;
         }
         count
     }
