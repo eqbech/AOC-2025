@@ -1,6 +1,6 @@
 use crate::Solution;
 
-#[derive(Debug)]
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
 enum Direction {
     L,
     R,
@@ -23,17 +23,10 @@ impl Solution for DayOneSolution {
         let mut count: u32 = 0;
         let mut position: i32 = 50;
         for (dir, amount) in &self.data {
-            match dir {
-                Direction::L => {
-                    position -= *amount;
-                }
-                Direction::R => {
-                    position += *amount;
-                }
-            }
-            if (position == 0) || (position.abs() % 100 == 0) {
-                count += 1;
-            }
+            position += if *dir == Direction::R {*amount} else {-*amount};
+            position += if position < 0 { 100 } else { 0 };
+            position -= if position >= 100 { 100 } else { 0 };
+            count += (position == 0) as u32;
         }
         count
     }
