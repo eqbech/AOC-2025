@@ -45,19 +45,18 @@ impl Solution for DayEightSolution {
     fn part_one(&self) -> u64 {
         //Scuffed but now works with both test and real input
         let num_connections = if self.data.len() == 1000 {1000} else {10};
-        
+
         let mut circuits: Vec<HashSet<JunctionBox>> = Vec::new();
         let connections = find_shortest_connections(&self.data);
 
-        let mut connections_added = 0;
-        let mut circuit_len = 1;
+        let mut connections_added = 1;
         circuits.push(HashSet::from([connections[0].0, connections[0].1]));
         'outer: for set in connections.iter().skip(1) {
             if connections_added >= num_connections {
                 break;
             }
             let mut i = 0;
-            while i < circuit_len {
+            while i < circuits.len() {
                 if circuits[i].contains(&set.0) && circuits[i].contains(&set.1) {
                     //Both already in circuit
                     connections_added += 1;
@@ -73,7 +72,6 @@ impl Solution for DayEightSolution {
                                 current_set.insert(item);
                             }
                             connections_added += 1;
-                            circuit_len -= 1;
                             continue 'outer;
                         }
                     }
@@ -88,7 +86,6 @@ impl Solution for DayEightSolution {
                                 current_set.insert(item);
                             }
                             connections_added += 1;
-                            circuit_len -= 1;
                             continue 'outer;
                         }
                     }
@@ -103,7 +100,6 @@ impl Solution for DayEightSolution {
             }
             circuits.push(HashSet::from([set.0, set.1]));
             connections_added += 1;
-            circuit_len += 1;
         }
         // Remember to take 3 largest circuits
         circuits.sort_by_key(|c| c.len());
@@ -172,7 +168,7 @@ impl Solution for DayEightSolution {
             circuit_len += 1;
         }
         x1 * x2
-        
+
     }
 }
 
