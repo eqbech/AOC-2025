@@ -1,5 +1,6 @@
 ## Advent Of Code - 2025
 
+
 ### Benchmark Results
 
 Day  |  Solved                                                                                   |  Part 1 runtime                        |  Part 2 runtime                      
