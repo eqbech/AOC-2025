@@ -34,6 +34,11 @@ impl JunctionBox {
 pub struct DayEightSolution {
     data: Vec<JunctionBox>,
 }
+#[cfg(test)]
+const NUM_CONNECTIONS: usize = 10;
+
+#[cfg(not(test))]
+const NUM_CONNECTIONS: usize = 1000;
 
 impl Solution for DayEightSolution {
     const DAY: u8 = 8;
@@ -44,27 +49,25 @@ impl Solution for DayEightSolution {
 
     fn part_one(&self) -> u64 {
         //Scuffed but now works with both test and real input
-        let num_connections = if self.data.len() == 1000 {1000} else {10};
 
         let mut circuits: Vec<HashSet<JunctionBox>> = Vec::new();
         let connections = find_shortest_connections(&self.data);
 
-        let mut connections_added = 1;
-        circuits.push(HashSet::from([connections[0].0, connections[0].1]));
-        'outer: for set in connections.iter().skip(1) {
-            if connections_added >= num_connections {
+        let mut connections_added = 0;
+        'outer: for set in connections {
+            if connections_added >= NUM_CONNECTIONS {
                 break;
             }
             let mut i = 0;
             while i < circuits.len() {
-                if circuits[i].contains(&set.0) && circuits[i].contains(&set.1) {
+                if circuits[i].contains(&set.box_a) && circuits[i].contains(&set.box_b) {
                     //Both already in circuit
                     connections_added += 1;
                     continue 'outer;
                 }
-                if circuits[i].contains(&set.0) && !circuits[i].contains(&set.1) {
+                if circuits[i].contains(&set.box_a) && !circuits[i].contains(&set.box_b) {
                     for k in 0..circuits.len() {
-                        if circuits[k].contains(&set.1) {
+                        if circuits[k].contains(&set.box_b) {
                             let (bucket_to_extend, bucket_to_remove) = (k.min(i), k.max(i));
                             let to_merge = circuits.remove(bucket_to_remove);
                             let current_set = &mut circuits[bucket_to_extend];
@@ -76,9 +79,9 @@ impl Solution for DayEightSolution {
                         }
                     }
                 }
-                if circuits[i].contains(&set.1) && !circuits[i].contains(&set.0) {
+                if circuits[i].contains(&set.box_b) && !circuits[i].contains(&set.box_a) {
                     for k in 0..circuits.len() {
-                        if circuits[k].contains(&set.0) {
+                        if circuits[k].contains(&set.box_a) {
                             let (bucket_to_extend, bucket_to_remove) = (k.min(i), k.max(i));
                             let to_merge = circuits.remove(bucket_to_remove);
                             let current_set = &mut circuits[bucket_to_extend];
@@ -90,15 +93,15 @@ impl Solution for DayEightSolution {
                         }
                     }
                 }
-                if circuits[i].contains(&set.0) || circuits[i].contains(&set.1) {
-                    circuits[i].insert(set.0);
-                    circuits[i].insert(set.1);
+                if circuits[i].contains(&set.box_a) || circuits[i].contains(&set.box_b) {
+                    circuits[i].insert(set.box_a);
+                    circuits[i].insert(set.box_b);
                     connections_added += 1;
                     continue 'outer;
                 }
                 i += 1;
             }
-            circuits.push(HashSet::from([set.0, set.1]));
+            circuits.push(HashSet::from([set.box_a, set.box_b]));
             connections_added += 1;
         }
         // Remember to take 3 largest circuits
@@ -110,17 +113,16 @@ impl Solution for DayEightSolution {
         let mut circuits: Vec<HashSet<JunctionBox>> = Vec::new();
         let connections = find_shortest_connections(&self.data);
 
-        let (mut x1, mut x2) = (connections[0].0.x, connections[0].1.x);
-        circuits.push(HashSet::from([connections[0].0, connections[0].1]));
-        'outer: for set in connections.iter().skip(1) {
+        let (mut x1, mut x2) = (0, 0);
+        'outer: for set in connections {
             let mut i = 0;
             while i < circuits.len() {
-                if circuits[i].contains(&set.0) && circuits[i].contains(&set.1) {
+                if circuits[i].contains(&set.box_a) && circuits[i].contains(&set.box_b) {
                     continue 'outer;
                 }
-                if circuits[i].contains(&set.0) && !circuits[i].contains(&set.1) {
+                if circuits[i].contains(&set.box_a) && !circuits[i].contains(&set.box_b) {
                     for k in 0..circuits.len() {
-                        if circuits[k].contains(&set.1) {
+                        if circuits[k].contains(&set.box_b) {
                             let (bucket_to_extend, bucket_to_remove) = (k.min(i), k.max(i));
                             let to_merge = circuits.remove(bucket_to_remove);
                             let current_set = &mut circuits[bucket_to_extend];
@@ -128,17 +130,17 @@ impl Solution for DayEightSolution {
                                 current_set.insert(item);
                             }
                             if circuits.len() == 1 && circuits[0].len() == self.data.len() {
-                                x1 = set.0.x;
-                                x2 = set.1.x;
+                                x1 = set.box_a.x;
+                                x2 = set.box_b.x;
                                 break 'outer;
                             }
                             continue 'outer;
                         }
                     }
                 }
-                if circuits[i].contains(&set.1) && !circuits[i].contains(&set.0) {
+                if circuits[i].contains(&set.box_b) && !circuits[i].contains(&set.box_a) {
                     for k in 0..circuits.len() {
-                        if circuits[k].contains(&set.0) {
+                        if circuits[k].contains(&set.box_a) {
                             let (bucket_to_extend, bucket_to_remove) = (k.min(i), k.max(i));
                             let to_merge = circuits.remove(bucket_to_remove);
                             let current_set = &mut circuits[bucket_to_extend];
@@ -146,27 +148,27 @@ impl Solution for DayEightSolution {
                                 current_set.insert(item);
                             }
                             if circuits.len() == 1 && circuits[0].len() == self.data.len() {
-                                x1 = set.0.x;
-                                x2 = set.1.x;
+                                x1 = set.box_a.x;
+                                x2 = set.box_b.x;
                                 break 'outer;
                             }
                             continue 'outer;
                         }
                     }
                 }
-                if circuits[i].contains(&set.0) || circuits[i].contains(&set.1) {
-                    circuits[i].insert(set.0);
-                    circuits[i].insert(set.1);
+                if circuits[i].contains(&set.box_a) || circuits[i].contains(&set.box_b) {
+                    circuits[i].insert(set.box_a);
+                    circuits[i].insert(set.box_b);
                     if circuits.len() == 1 && circuits[0].len() == self.data.len() {
-                        x1 = set.0.x;
-                        x2 = set.1.x;
+                        x1 = set.box_a.x;
+                        x2 = set.box_b.x;
                         break 'outer;
                     }
                     continue 'outer;
                 }
                 i += 1;
             }
-            circuits.push(HashSet::from([set.0, set.1]));
+            circuits.push(HashSet::from([set.box_a, set.box_b]));
         }
         x1 * x2
 
@@ -180,21 +182,27 @@ fn parse_input(input: &[String]) -> Vec<JunctionBox> {
         .collect::<Vec<JunctionBox>>()
 }
 
-fn find_shortest_connections(boxes: &Vec<JunctionBox>) -> Vec<(JunctionBox, JunctionBox, u64)> {
-    let mut connections: HashSet<(JunctionBox, JunctionBox, u64)> = HashSet::with_capacity(boxes.len());
-    for a_box in boxes {
-        for b_box in boxes {
-            if a_box != b_box {
-                let distance = a_box.distance(b_box);
-                if connections.contains(&(*b_box, *a_box, distance)) || connections.contains(&(*b_box, *a_box, distance)) {
-                    continue;
-                }
-                connections.insert((*a_box, *b_box, distance));
-            }
+#[derive(Eq, PartialEq, Hash)]
+struct Connection {
+    box_a: JunctionBox,
+    box_b: JunctionBox,
+    distance: u64,
+}
+
+fn find_shortest_connections(boxes: &Vec<JunctionBox>) -> impl IntoIterator<Item = Connection> {
+    let mut connections: HashSet<Connection> = HashSet::with_capacity(boxes.len() * boxes.len());
+    let mut index_a = 0;
+    while index_a < boxes.len() {
+        let mut index_b = index_a + 1;
+        while index_b < boxes.len() {
+            let distance = boxes[index_a].distance(&boxes[index_b]);
+            connections.insert(Connection { box_a: boxes[index_a], box_b: boxes[index_b], distance });
+            index_b += 1;
         }
+        index_a += 1;
     }
-    let mut sorted = connections.into_iter().map(|x: (JunctionBox, JunctionBox, u64)| x).collect::<Vec<(JunctionBox, JunctionBox, u64)>>();
-    sorted.sort_by_key(|(_, _, dist)| *dist);
+    let mut sorted = connections.into_iter().map(|x| x).collect::<Vec<Connection>>();
+    sorted.sort_by_key(|conn| conn.distance);
     sorted
 }
 
