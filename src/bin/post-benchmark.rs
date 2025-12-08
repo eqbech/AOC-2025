@@ -14,8 +14,8 @@ fn main() {
     ]);
 
     for day in 1..=12 {
-        let part1_path = format!("{}/AOC day {}/Solution one/base/estimates.json", path, day);
-        let part2_path = format!("{}/AOC day {}/Solution two/base/estimates.json", path, day);
+        let part1_path = format!("{}/{}/Solution one/base/estimates.json", path, day);
+        let part2_path = format!("{}/{}/Solution two/base/estimates.json", path, day);
 
         let part1_time = colorize_benchmark(&read_benchmark(&part1_path));
         let part2_time = colorize_benchmark(&read_benchmark(&part2_path));
