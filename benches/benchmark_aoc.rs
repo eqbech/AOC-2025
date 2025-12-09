@@ -1,7 +1,7 @@
-use aoc_2025::{
+use aoc::{
     Solution,
     implementation::{
-        day_1::DayOneSolution, day_2::DayTwoSolution, day_3::DayThreeSolution, day_4::DayFourSolution, day_5::DayFiveSolution, day_6::DaySixSolution, day_7::DaySevenSolution, day_8::DayEightSolution
+        day_1::DayOneSolution, day_2::DayTwoSolution, day_3::DayThreeSolution, day_4::DayFourSolution, day_5::DayFiveSolution, day_6::DaySixSolution, day_7::DaySevenSolution, day_8::DayEightSolution, day_9::DayNineSolution
     },
 };
 
@@ -79,6 +79,15 @@ fn benchmark_aoc_day_eight(c: &mut Criterion) {
     group.finish();
 }
 
+fn benchmark_aoc_day_nine(c: &mut Criterion) {
+    let day_nine = DayNineSolution::new();
+    let mut group = c.benchmark_group("9");
+
+    group.bench_function("d9s1", |b| b.iter(|| day_nine.part_one()));
+    group.bench_function("d9s2", |b| b.iter(|| day_nine.part_two()));
+    group.finish();
+}
+
 criterion_group!(
     benches,
     benchmark_aoc_day_one,
@@ -89,5 +98,6 @@ criterion_group!(
     benchmark_aoc_day_six,
     benchmark_aoc_day_seven,
     benchmark_aoc_day_eight,
+    benchmark_aoc_day_nine,
 );
 criterion_main!(benches);

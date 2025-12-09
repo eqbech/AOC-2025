@@ -1,4 +1,4 @@
-use aoc_2025::*;
+use aoc::*;
 use std::env;
 
 fn main() {

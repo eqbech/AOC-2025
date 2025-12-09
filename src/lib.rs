@@ -10,7 +10,7 @@ use std::{fs, io::Error};
 ///
 /// ```
 /// #[allow(refining_impl_trait)]
-/// use aoc_2025::Solution;
+/// use aoc::Solution;
 ///
 /// struct MyDaySolution {
 ///    data: Vec<String>,
@@ -97,7 +97,7 @@ pub trait Solution {
 /// # Examples
 ///
 /// ```
-/// use aoc_2025::AdventOfCodeSolver;
+/// use aoc::AdventOfCodeSolver;
 ///
 /// let solver = AdventOfCodeSolver::new();
 /// solver.solve(vec!["path_to_executable".to_string(), "ex".to_string()]);
