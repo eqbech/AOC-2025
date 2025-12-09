@@ -228,30 +228,19 @@ fn is_area_valid(x_map: &HashMap<i32, (i32, i32)>, y_map: &HashMap<i32, (i32, i3
     let edges = tile_area.get_edges();
     let (width, height) = tile_area.get_dimensions();
 
-    // check out of bounds x_min
+    // check out of bounds X
     for y in edges.top_left.y..(edges.top_left.y + height) {
-        if edges.top_left.x < y_map.get(&y).unwrap().0 {
+        if edges.top_left.x < y_map.get(&y).unwrap().0 || edges.top_right.x > y_map.get(&y).unwrap().1{
             return false;
         }
     }
-    // check out of bounds x_max
-    for y in edges.top_right.y..(edges.top_right.y + height) {
-        if edges.top_right.x > y_map.get(&y).unwrap().1 {
-            return false;
-        }
-    }
-    // check out of bounds y_min
+    // check out of bounds Y
     for x in edges.top_left.x..(edges.top_left.x + width) {
-        if edges.top_left.y < x_map.get(&x).unwrap().0 {
+        if edges.top_left.y < x_map.get(&x).unwrap().0 || edges.top_right.y > x_map.get(&x).unwrap().1 {
             return false;
         }
     }
-    // check out of bounds y_max
-    for x in edges.bottom_left.x..(edges.bottom_left.x + width) {
-        if edges.bottom_left.y > x_map.get(&x).unwrap().1 {
-            return false;
-        }
-    }
+
     true
 }
 // Todo now traverse both direction of loop only need to go one way...
