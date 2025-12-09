@@ -200,7 +200,6 @@ impl Solution for DayNineSolution {
         let mut largest_area = 0;
         let mut y = 0;
         while y < valid_points.len() {
-            println!("Checking point {}", y);
             let mut x = y + 1;
             while x < valid_points.len() {
                 let t = TileArea {
