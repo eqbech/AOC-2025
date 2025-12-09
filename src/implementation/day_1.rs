@@ -31,28 +31,15 @@ impl Solution for DayOneSolution {
 
     fn part_two(&self) -> u32 {
         let mut count = 0;
-        let mut position: i32 = 50;
+        let mut position: i32 = 50 + (i32::MAX / 200) * 100;
         for (dir, amount) in &self.data {
-            match dir {
-                Direction::L => {
-                    let new_pos = if position == 0 {
-                        *amount
-                    } else {
-                        *amount + (100 - position)
-                    };
-                    count += new_pos / 100;
-                    position = 100 - (new_pos % 100);
-                }
-                Direction::R => {
-                    let new_pos = if position == 100 {
-                        *amount as i32
-                    } else {
-                        position + *amount as i32
-                    };
-                    count += new_pos / 100;
-                    position = new_pos % 100;
-                }
-            }
+            let old_position = position;
+            position += if *dir == Direction::R {*amount} else {-*amount};
+            let start = old_position.min(position);
+            let end = old_position.max(position);
+            count += ((end-start) / 100) as u32;
+            count += (100 < start % 100 + ((end-start) % 100)) as u32;
+            count += (position % 100 == 0) as u32;
         }
         count as u32
     }
