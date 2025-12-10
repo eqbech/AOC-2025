@@ -23,7 +23,11 @@ impl Solution for DayOneSolution {
         let mut count: u32 = 0;
         let mut position: i32 = 50;
         for (dir, amount) in &self.data {
-            position += if *dir == Direction::R {*amount} else {-*amount};
+            position += if *dir == Direction::R {
+                *amount
+            } else {
+                -*amount
+            };
             count += (position % 100 == 0) as u32;
         }
         count
@@ -34,11 +38,15 @@ impl Solution for DayOneSolution {
         let mut position: i32 = 50 + (i32::MAX / 200) * 100;
         for (dir, amount) in &self.data {
             let old_position = position;
-            position += if *dir == Direction::R {*amount} else {-*amount};
+            position += if *dir == Direction::R {
+                *amount
+            } else {
+                -*amount
+            };
             let start = old_position.min(position);
             let end = old_position.max(position);
-            count += ((end-start) / 100) as u32;
-            count += (100 < start % 100 + ((end-start) % 100)) as u32;
+            count += ((end - start) / 100) as u32;
+            count += (100 < start % 100 + ((end - start) % 100)) as u32;
             count += (position % 100 == 0) as u32;
         }
         count as u32

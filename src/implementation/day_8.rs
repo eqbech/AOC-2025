@@ -44,7 +44,9 @@ impl Solution for DayEightSolution {
     const DAY: u8 = 8;
 
     fn new() -> Self {
-        DayEightSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
+        DayEightSolution {
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
+        }
     }
 
     fn part_one(&self) -> u64 {
@@ -106,7 +108,12 @@ impl Solution for DayEightSolution {
         }
         // Remember to take 3 largest circuits
         circuits.sort_by_key(|c| c.len());
-        circuits.iter().rev().take(3).map(|c| c.len() as u64).product::<u64>()
+        circuits
+            .iter()
+            .rev()
+            .take(3)
+            .map(|c| c.len() as u64)
+            .product::<u64>()
     }
 
     fn part_two(&self) -> u64 {
@@ -171,7 +178,6 @@ impl Solution for DayEightSolution {
             circuits.push(HashSet::from([set.box_a, set.box_b]));
         }
         x1 * x2
-
     }
 }
 
@@ -196,12 +202,19 @@ fn find_shortest_connections(boxes: &Vec<JunctionBox>) -> impl IntoIterator<Item
         let mut index_b = index_a + 1;
         while index_b < boxes.len() {
             let distance = boxes[index_a].distance(&boxes[index_b]);
-            connections.insert(Connection { box_a: boxes[index_a], box_b: boxes[index_b], distance });
+            connections.insert(Connection {
+                box_a: boxes[index_a],
+                box_b: boxes[index_b],
+                distance,
+            });
             index_b += 1;
         }
         index_a += 1;
     }
-    let mut sorted = connections.into_iter().map(|x| x).collect::<Vec<Connection>>();
+    let mut sorted = connections
+        .into_iter()
+        .map(|x| x)
+        .collect::<Vec<Connection>>();
     sorted.sort_by_key(|conn| conn.distance);
     sorted
 }
@@ -213,7 +226,8 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_vec = fs::read_to_string("data/test/test_8.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_8.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
@@ -227,7 +241,8 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let test_vec = fs::read_to_string("data/test/test_8.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_8.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
@@ -240,4 +255,3 @@ mod tests {
         assert_eq!(25272, sol);
     }
 }
-

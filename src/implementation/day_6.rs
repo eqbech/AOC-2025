@@ -8,7 +8,9 @@ impl Solution for DaySixSolution {
     const DAY: u8 = 6;
 
     fn new() -> Self {
-        DaySixSolution { data: Self::read_data_to_vec().unwrap() }
+        DaySixSolution {
+            data: Self::read_data_to_vec().unwrap(),
+        }
     }
 
     fn part_one(&self) -> u64 {
@@ -32,12 +34,20 @@ impl Solution for DaySixSolution {
     fn part_two(&self) -> u64 {
         let mut sum = 0u64;
         let data = parse_input_2(&self.data);
-        
+
         for col in &data {
-            let operation = col.last().unwrap().chars().filter(|c| !c.is_whitespace()).next().unwrap();
+            let operation = col
+                .last()
+                .unwrap()
+                .chars()
+                .filter(|c| !c.is_whitespace())
+                .next()
+                .unwrap();
             let mut res = if operation == '+' { 0 } else { 1 };
-            let mut val_arr = (0..col.first().unwrap().len()).map(|_| "".to_string()).collect::<Vec<String>>();
-            
+            let mut val_arr = (0..col.first().unwrap().len())
+                .map(|_| "".to_string())
+                .collect::<Vec<String>>();
+
             for &val in col.iter().take(col.len() - 1) {
                 for (i, c) in val.chars().enumerate() {
                     if c.is_whitespace() {
@@ -61,11 +71,17 @@ impl Solution for DaySixSolution {
 }
 
 fn parse_input_1(input: &[String]) -> Vec<Vec<u64>> {
-    let n_cols = input[0].trim().split_whitespace().collect::<Vec<&str>>().len();
+    let n_cols = input[0]
+        .trim()
+        .split_whitespace()
+        .collect::<Vec<&str>>()
+        .len();
     let mut res: Vec<Vec<u64>> = (0..n_cols).map(|_| Vec::new()).collect();
-    
+
     input.iter().enumerate().for_each(|(index, line)| {
-        line.trim().split_whitespace().enumerate()
+        line.trim()
+            .split_whitespace()
+            .enumerate()
             .for_each(|(col_index, num)| {
                 if index == input.len() - 1 {
                     let val = match num {
@@ -114,28 +130,26 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_vec = fs::read_to_string("data/test/test_6.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_6.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
 
-        let day_six = DaySixSolution {
-            data: test_vec,
-        };
+        let day_six = DaySixSolution { data: test_vec };
         let sol = day_six.part_one();
         assert_eq!(4277556, sol);
     }
 
     #[test]
     fn test_part_two() {
-        let test_vec = fs::read_to_string("data/test/test_6.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_6.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
 
-        let day_six = DaySixSolution {
-            data: test_vec,
-        };
+        let day_six = DaySixSolution { data: test_vec };
         let sol = day_six.part_two();
 
         assert_eq!(3263827, sol);

@@ -8,7 +8,9 @@ impl Solution for DayFiveSolution {
     const DAY: u8 = 5;
 
     fn new() -> Self {
-        DayFiveSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
+        DayFiveSolution {
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
+        }
     }
 
     fn part_one(&self) -> u32 {
@@ -17,8 +19,9 @@ impl Solution for DayFiveSolution {
             let mut l = self.data.0.len() / 2;
             let mut r = l + 1;
             loop {
-                if *id >= self.data.0[l].0 && *id <= self.data.0[l].1 
-                || *id >= self.data.0[r].0 && *id <= self.data.0[r].1 {
+                if *id >= self.data.0[l].0 && *id <= self.data.0[l].1
+                    || *id >= self.data.0[r].0 && *id <= self.data.0[r].1
+                {
                     sum += 1;
                     break;
                 }
@@ -26,7 +29,11 @@ impl Solution for DayFiveSolution {
                     break;
                 }
                 l = if l > 0 { l - 1 } else { 0 };
-                r = if r < self.data.0.len() - 1 { r + 1 } else { self.data.0.len() - 1 };
+                r = if r < self.data.0.len() - 1 {
+                    r + 1
+                } else {
+                    self.data.0.len() - 1
+                };
             }
         }
         sum
@@ -88,7 +95,8 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_vec = fs::read_to_string("data/test/test_5.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_5.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
@@ -102,7 +110,8 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let test_vec = fs::read_to_string("data/test/test_5.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_5.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();

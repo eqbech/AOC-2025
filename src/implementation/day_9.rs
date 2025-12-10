@@ -63,11 +63,11 @@ impl<'a> PartialOrd for TileArea<'a> {
 
 impl<'a> PartialEq for TileArea<'a> {
     fn eq(&self, other: &Self) -> bool {
-        self.area == other.area &&
-        self.point_a.x == other.point_a.x &&
-        self.point_a.y == other.point_a.y &&
-        self.point_b.x == other.point_b.x &&
-        self.point_b.y == other.point_b.y
+        self.area == other.area
+            && self.point_a.x == other.point_a.x
+            && self.point_a.y == other.point_a.y
+            && self.point_b.x == other.point_b.x
+            && self.point_b.y == other.point_b.y
     }
 }
 
@@ -81,7 +81,9 @@ impl Solution for DayNineSolution {
     const DAY: u8 = 9;
 
     fn new() -> Self {
-        DayNineSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
+        DayNineSolution {
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
+        }
     }
 
     fn part_one(&self) -> u64 {
@@ -102,9 +104,16 @@ impl Solution for DayNineSolution {
         largest_area
     }
 
-    fn part_two(&self) -> u64 {   
+    fn part_two(&self) -> u64 {
         let mut loops: Vec<Vec<Point>> = Vec::with_capacity(self.data.len());
-        get_loops(&self.data[0], &self.data[0], None, &self.data, vec![], &mut loops);
+        get_loops(
+            &self.data[0],
+            &self.data[0],
+            None,
+            &self.data,
+            vec![],
+            &mut loops,
+        );
         assert_eq!(loops.len(), 2);
         let mut points = loops[0].clone();
 
@@ -120,7 +129,7 @@ impl Solution for DayNineSolution {
             let curr = &points[i];
             let prev = &valid_points[valid_points.len() - 1];
             let next = &points[i + 1];
-            
+
             if prev.x == curr.x && curr.x == next.x {
                 points.remove(i);
                 continue;
@@ -137,26 +146,21 @@ impl Solution for DayNineSolution {
         let mut boundary_points: Vec<Point> = Vec::with_capacity(valid_points.len());
         for (a, b) in valid_points.iter().zip(valid_points.iter().skip(1)) {
             if a.x == b.x {
-                let range = if a.y < b.y {
-                    a.y..=b.y
-                } else {
-                    b.y..=a.y
-                };
+                let range = if a.y < b.y { a.y..=b.y } else { b.y..=a.y };
                 for y in range {
                     boundary_points.push(Point { x: a.x, y });
                 }
             } else if a.y == b.y {
-                let range = if a.x < b.x {
-                    a.x..=b.x
-                } else {
-                    b.x..=a.x
-                };
+                let range = if a.x < b.x { a.x..=b.x } else { b.x..=a.x };
                 for x in range {
                     boundary_points.push(Point { x, y: a.y });
                 }
             }
         }
-        let (special_a, special_b) = (valid_points[0].clone(), valid_points[valid_points.len() -1].clone());
+        let (special_a, special_b) = (
+            valid_points[0].clone(),
+            valid_points[valid_points.len() - 1].clone(),
+        );
         if special_a.x == special_b.x {
             let range = if special_a.y < special_b.y {
                 special_a.y..=special_b.y
@@ -224,19 +228,27 @@ impl Solution for DayNineSolution {
     }
 }
 
-fn is_area_valid(x_map: &HashMap<i32, (i32, i32)>, y_map: &HashMap<i32, (i32, i32)>, tile_area: &TileArea) -> bool {
+fn is_area_valid(
+    x_map: &HashMap<i32, (i32, i32)>,
+    y_map: &HashMap<i32, (i32, i32)>,
+    tile_area: &TileArea,
+) -> bool {
     let edges = tile_area.get_edges();
     let (width, height) = tile_area.get_dimensions();
 
     // check out of bounds X
     for y in edges.top_left.y..(edges.top_left.y + height) {
-        if edges.top_left.x < y_map.get(&y).unwrap().0 || edges.top_right.x > y_map.get(&y).unwrap().1{
+        if edges.top_left.x < y_map.get(&y).unwrap().0
+            || edges.top_right.x > y_map.get(&y).unwrap().1
+        {
             return false;
         }
     }
     // check out of bounds Y
     for x in edges.top_left.x..(edges.top_left.x + width) {
-        if edges.top_left.y < x_map.get(&x).unwrap().0 || edges.top_right.y > x_map.get(&x).unwrap().1 {
+        if edges.top_left.y < x_map.get(&x).unwrap().0
+            || edges.top_right.y > x_map.get(&x).unwrap().1
+        {
             return false;
         }
     }
@@ -257,57 +269,65 @@ fn get_loops(
         Some(p) => {
             if p == start && visited_points.len() >= 1 {
                 loops.push(visited_points.clone());
-                return
+                return;
             }
             p
-        },
+        }
         None => start,
     };
     if visited_points.len() > points.len() {
-        return
+        return;
     }
     // Up
-    let up = points.iter().find(|p| p.x == curr_point.x && p.y > curr_point.y && *p != prev);
+    let up = points
+        .iter()
+        .find(|p| p.x == curr_point.x && p.y > curr_point.y && *p != prev);
     if let Some(up_point) = up {
         if visited_points.contains(up_point) {
-            return
+            return;
         }
         let mut temp = visited_points.clone();
         temp.push(up_point.clone());
         get_loops(start, curr_point, Some(up_point), points, temp, loops);
     }
     // Down
-    let down = points.iter().find(|p| p.x == curr_point.x && p.y < curr_point.y && *p != prev);
+    let down = points
+        .iter()
+        .find(|p| p.x == curr_point.x && p.y < curr_point.y && *p != prev);
     if let Some(down_point) = down {
         if visited_points.contains(down_point) {
-            return
+            return;
         }
         let mut temp = visited_points.clone();
         temp.push(down_point.clone());
         get_loops(start, curr_point, Some(down_point), points, temp, loops);
     }
     // Left
-    let left = points.iter().find(|p| p.x < curr_point.x && p.y == curr_point.y && *p != prev);
+    let left = points
+        .iter()
+        .find(|p| p.x < curr_point.x && p.y == curr_point.y && *p != prev);
     if let Some(left_point) = left {
         if visited_points.contains(left_point) {
-            return
+            return;
         }
         let mut temp = visited_points.clone();
         temp.push(left_point.clone());
         get_loops(start, curr_point, Some(left_point), points, temp, loops);
     }
     // Right
-    let right = points.iter().find(|p| p.x > curr_point.x && p.y == curr_point.y && *p != prev);
+    let right = points
+        .iter()
+        .find(|p| p.x > curr_point.x && p.y == curr_point.y && *p != prev);
     if let Some(right_point) = right {
         if visited_points.contains(right_point) {
-            return
+            return;
         }
         let mut temp = visited_points.clone();
         temp.push(right_point.clone());
         get_loops(start, curr_point, Some(right_point), points, temp, loops);
     }
 
-    return
+    return;
 }
 
 fn parse_input(input: &Vec<String>) -> Vec<Point> {
@@ -332,7 +352,8 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_vec = fs::read_to_string("data/test/test_9.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_9.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
@@ -346,7 +367,8 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let test_vec = fs::read_to_string("data/test/test_9.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_9.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();

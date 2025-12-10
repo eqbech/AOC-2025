@@ -14,7 +14,9 @@ impl Solution for DaySevenSolution {
     const DAY: u8 = 7;
 
     fn new() -> Self {
-        DaySevenSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
+        DaySevenSolution {
+            data: parse_input(&Self::read_data_to_vec().unwrap()),
+        }
     }
 
     fn part_one(&self) -> u16 {
@@ -30,7 +32,13 @@ impl Solution for DaySevenSolution {
         // Assumption 2: The last line never contains a Splitter.
         // It also looks like there are only splitters every other row.
         // TBD in the future what to do about it.
-        for line in self.data.iter().skip(2).take(self.data.len() - 2).step_by(2) {
+        for line in self
+            .data
+            .iter()
+            .skip(2)
+            .take(self.data.len() - 2)
+            .step_by(2)
+        {
             let mut i = left_bound;
             assert!(taychon_beams.len() == line.len());
             while i <= right_bound {
@@ -62,10 +70,16 @@ impl Solution for DaySevenSolution {
         // Assumption 2: The last line never contains a Splitter.
         // It also looks like there are only splitters every other row.
         // TBD in the future what to do about it.
-        for line in self.data.iter().skip(2).take(self.data.len() - 2).step_by(2) {
+        for line in self
+            .data
+            .iter()
+            .skip(2)
+            .take(self.data.len() - 2)
+            .step_by(2)
+        {
             let mut i = 1;
             assert!(taychon_beams.len() == line.len());
-            while i < line.len()-1 {
+            while i < line.len() - 1 {
                 if line[i] == SPLITTER && 0 < taychon_beams[i] {
                     taychon_beams[i - 1] += taychon_beams[i];
                     taychon_beams[i + 1] += taychon_beams[i];
@@ -82,7 +96,6 @@ impl Solution for DaySevenSolution {
     }
 }
 
-
 fn parse_input(input: &[String]) -> Vec<Vec<u8>> {
     input
         .iter()
@@ -96,7 +109,8 @@ mod tests {
 
     #[test]
     fn test_part_one() {
-        let test_vec = fs::read_to_string("data/test/test_7.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_7.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();
@@ -110,7 +124,8 @@ mod tests {
 
     #[test]
     fn test_part_two() {
-        let test_vec = fs::read_to_string("data/test/test_7.txt").unwrap()
+        let test_vec = fs::read_to_string("data/test/test_7.txt")
+            .unwrap()
             .lines()
             .map(|line| line.to_string())
             .collect::<Vec<String>>();

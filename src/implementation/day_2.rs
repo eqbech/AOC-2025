@@ -31,10 +31,7 @@ impl Solution for DayTwoSolution {
                     continue;
                 }
                 // Check if first half is equal to last half
-                let (first, second) = (
-                    i / 10_u64.pow(mid as u32),
-                    i % 10_u64.pow(mid as u32),
-                );
+                let (first, second) = (i / 10_u64.pow(mid as u32), i % 10_u64.pow(mid as u32));
                 if first == second {
                     sum += i;
                     i += 10_u64.pow(mid as u32);

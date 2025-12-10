@@ -30,7 +30,7 @@ impl Solution for DayThreeSolution {
                         last_digit = pack[i];
                     }
                 }
-                if pack[i] > first_digit && i != pack.len() -1 {
+                if pack[i] > first_digit && i != pack.len() - 1 {
                     first_digit = pack[i];
                     first_digit_pos = i;
                     last_digit = b'0';
@@ -42,7 +42,8 @@ impl Solution for DayThreeSolution {
                 }
                 i += 1;
             }
-            sum += (first_digit as char).to_digit(10).unwrap() * 10 + (last_digit as char).to_digit(10).unwrap();
+            sum += (first_digit as char).to_digit(10).unwrap() * 10
+                + (last_digit as char).to_digit(10).unwrap();
         }
         sum
     }
@@ -71,7 +72,8 @@ impl Solution for DayThreeSolution {
             }
             let mut pack_sum: u64 = 0;
             for i in 0..digits_vec.len() {
-                pack_sum += (digits_vec[i].0 as char).to_digit(10).unwrap() as u64 * 10_u64.pow((digits_vec.len() - 1 - i) as u32);
+                pack_sum += (digits_vec[i].0 as char).to_digit(10).unwrap() as u64
+                    * 10_u64.pow((digits_vec.len() - 1 - i) as u32);
             }
             sum += pack_sum;
             digits_vec.fill((b'0', 0));
