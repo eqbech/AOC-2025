@@ -46,7 +46,6 @@ impl Manual {
             let button_combos = self.combinations(n as usize);
             for combo in button_combos {
                 let (jolt, maxed_out, presses) = self.pre_process_joltage(&combo);
-                println!("Pre-processed joltage: {:?}, maxed_out: {:?}, presses: {}", jolt, maxed_out, presses);
                 let (matched, presses) =
                     self.press_buttons_joltage(&combo, jolt, maxed_out, presses, &min_p);
                 if matched && presses < min_p {
@@ -67,7 +66,6 @@ impl Manual {
         let mut maxed_out = vec![];
         for combo in combination {
             let unique_idx: Vec<&u32> = combo.iter().filter(|c1| combination.iter().filter(|c2| c2.contains(c1)).count() == 1).collect();
-            println!("Unique idx for combo {:?}: {:?}", combo, unique_idx);
             if !unique_idx.is_empty() {
                 let b_idxes = combination.iter().enumerate()
                     .filter(|(_, b)| unique_idx.iter().any(|&u| b.contains(u)))
@@ -79,12 +77,12 @@ impl Manual {
                     }
                 }
             }
-            if !unique_idx.iter().all(|x|self.joltage_goal[*unique_idx[0] as usize] == self.joltage_goal[**x as usize]) {
-                println!("Skipping combo {:?} as all unique idx have same joltage goal", combo);
+            if unique_idx.is_empty() {
                 continue;
             }
-
-            println!("Processing unique idx: {}", unique_idx[0]);
+            if !unique_idx.iter().all(|x|self.joltage_goal[*unique_idx[0] as usize] == self.joltage_goal[**x as usize]) {
+                continue;
+            }
             let idx_usize = *unique_idx[0] as usize;
             let value = self.joltage_goal[idx_usize];
             for idx in combo {
@@ -291,7 +289,7 @@ impl Solution for DayTenSolution {
         for (i, manual) in self.data.clone().iter_mut().enumerate() {
             println!("Processing manual: {}", i);
             presses += manual.get_min_presses_joltage() as u64;
-            break;
+            println!("Total presses so far: {}", presses);
         }
         presses
     }
