@@ -1,4 +1,3 @@
-use core::num;
 use std::collections::{HashMap, HashSet};
 use nalgebra::base::Matrix;
 use crate::Solution;
@@ -48,17 +47,17 @@ pub struct DayElevenSolution {
     cache: TerminalPathCache
 }
 impl DayElevenSolution {
-    fn build_adjacency_matrix(&self) -> (Matrix<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>, HashMap<String, usize>) {
+    fn build_adjacency_matrix(&self) -> (Matrix<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>, HashMap<&str, usize>) {
         let size = self.data.len() + 1;
         let mut matrix = Matrix::<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>::zeros(size, size);
-        let mut keys: Vec<String> = self.data.keys().map(|k| k.to_string()).collect();
-        keys.push(OUT.to_string());
-        let key_index: HashMap<String, usize> = keys.iter().enumerate().map(|(i, k)| (k.clone(), i)).collect();
+        let mut keys: Vec<&str> = self.data.keys().map(String::as_str).collect();
+        keys.push(OUT);
+        let key_index: HashMap<&str, usize> = keys.iter().enumerate().map(|(i, k)| (*k, i)).collect();
 
         for (from_node, to_nodes) in &self.data {
-            let from_index = *key_index.get(from_node).unwrap();
+            let from_index = *key_index.get(from_node.as_str()).unwrap();
             for to_node in to_nodes {
-                if let Some(to_index) = key_index.get(to_node) {
+                if let Some(to_index) = key_index.get(to_node.as_str()) {
                     matrix[(from_index, *to_index)] = 1;
                 }
             }
@@ -67,7 +66,7 @@ impl DayElevenSolution {
     }
 }
 
-fn num_paths(adjacency_matrix: &mut Matrix<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>, from: &str, to: &str, key_index: HashMap<String, usize>) -> u64 {
+fn num_paths(mut adjacency_matrix: Matrix<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>, from: &str, to: &str, key_index: &HashMap<&str, usize>) -> u64 {
     let from_index = *key_index.get(from).unwrap();
     let to_index = *key_index.get(to).unwrap();
     adjacency_matrix[(from_index, from_index)] = 1;
@@ -83,21 +82,21 @@ impl Solution for DayElevenSolution {
     }
 
     fn part_one(&self) -> u32 {
-        let (mut mat, keys) = self.build_adjacency_matrix();
-        return num_paths(&mut mat, YOU, OUT, keys) as u32;
+        let (mat, keys) = self.build_adjacency_matrix();
+        return num_paths(mat, YOU, OUT, &keys) as u32;
     }
 
     fn part_two(&self) -> u64 {
-        let (mut mat, keys) = self.build_adjacency_matrix();
-        let p1 = num_paths(&mut mat, SVR, FFT, keys.clone()) as u64;
-        let p2 = num_paths(&mut mat, FFT, DAC, keys.clone()) as u64;
-        let p3 = num_paths(&mut mat, DAC, OUT, keys.clone()) as u64;
+        let (mat, keys) = self.build_adjacency_matrix();
+        let p1 = num_paths(mat.clone(), SVR, DAC, &keys);
+        let p2 = num_paths(mat.clone(), DAC, FFT, &keys);
+        let p3 = num_paths(mat.clone(), FFT, OUT, &keys);
+        let r = p1 * p2 * p3;
+        let p1 = num_paths(mat.clone(), SVR, FFT, &keys);
+        let p2 = num_paths(mat.clone(), FFT, DAC, &keys);
+        let p3 = num_paths(mat.clone(), DAC, OUT, &keys);
         let l = p1 * p2 * p3;
-        
-        let p4 = num_paths(&mut mat, SVR, DAC, keys.clone()) as u64;
-        let p5 = num_paths(&mut mat, DAC, FFT, keys.clone()) as u64;
-        let p6 = num_paths(&mut mat, FFT, OUT, keys.clone()) as u64;
-        let r = p4 * p5 * p6;
+        assert! (r == 0 || l == 0, "Either right or left path must be zero");
         return r + l;
     }
 }
