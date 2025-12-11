@@ -4,7 +4,7 @@ use aoc::{
         day_1::DayOneSolution, day_2::DayTwoSolution, day_3::DayThreeSolution,
         day_4::DayFourSolution, day_5::DayFiveSolution, day_6::DaySixSolution,
         day_7::DaySevenSolution, day_8::DayEightSolution, day_9::DayNineSolution,
-        day_10::DayTenSolution,
+        day_10::DayTenSolution, day_11::DayElevenSolution,
     },
 };
 
@@ -100,6 +100,15 @@ fn benchmark_aoc_day_ten(c: &mut Criterion) {
     group.finish();
 }
 
+fn benchmark_aoc_day_eleven(c: &mut Criterion) {
+    let day_eleven = DayElevenSolution::new();
+    let mut group = c.benchmark_group("11");
+
+    group.bench_function("Solution one", |b| b.iter(|| day_eleven.part_one()));
+    group.bench_function("Solution two", |b| b.iter(|| day_eleven.part_two()));
+    group.finish();
+}
+
 criterion_group!(
     benches,
     benchmark_aoc_day_one,
@@ -111,6 +120,7 @@ criterion_group!(
     benchmark_aoc_day_seven,
     benchmark_aoc_day_eight,
     benchmark_aoc_day_nine,
-    benchmark_aoc_day_ten
+    benchmark_aoc_day_ten,
+    benchmark_aoc_day_eleven,
 );
 criterion_main!(benches);

@@ -282,9 +282,8 @@ impl Solution for DayTenSolution {
         num_presses
     }
 
+    /// TODO: import Integer Linear Programming library and solve.
     fn part_two(&self) -> u64 {
-        // let num_cores = std::thread::available_parallelism().unwrap().get();
-        // println!("Number of available cores: {}", num_cores);
         let mut presses: u64 = 0;
         for (i, manual) in self.data.clone().iter_mut().enumerate() {
             println!("Processing manual: {}", i);
