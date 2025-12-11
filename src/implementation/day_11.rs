@@ -165,7 +165,7 @@ fn tree_search_node_to_node_v2(
     // Win condition
     if current_value == goal && visited_this_branch.contains(&DAC.to_string()) && visited_this_branch.contains(&FFT.to_string()) {
         // this path is always a Dub.
-        println!("Win detected: {:?}", visited_this_branch);
+        // println!("Win detected: {:?}", visited_this_branch);
         for v in &visited_this_branch {
             let value = win_map.entry(v.clone()).or_insert(0);
             *value += 1;
