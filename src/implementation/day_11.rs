@@ -11,40 +11,8 @@ const SVR: &str = "svr";
 const DAC: &str = "dac";
 const FFT: &str = "fft";
 
-#[derive(Clone)]
-struct TerminalPathCache {
-    lose_map: HashMap<String, Vec<bool>>,
-}
-impl TerminalPathCache {
-    fn new(map: &HashMap<String, Vec<String>>) -> Self {
-        let mut lose_map = HashMap::new();
-        for (k, v) in map {
-            lose_map.insert(k.clone(), vec![false; v.len()]);
-        }
-        TerminalPathCache {
-            lose_map
-        }
-    }
-    fn update(&mut self, visited: &[String], map: &HashMap<String, Vec<String>>) {
-        for v in visited.iter().rev() {
-            if let (Some(bool_nodes), Some(named_nodes)) = (self.lose_map.get_mut(v), map.get(v)) {
-                if bool_nodes.iter().all(|b| *b) {
-                    continue;
-                }
-                for (i, node) in named_nodes.iter().enumerate() {
-                    if visited.contains(node) {
-                        bool_nodes[i] = true;
-                        return;
-                    }
-                }
-            }
-        }
-    }
-}
-
 pub struct DayElevenSolution {
-    data: HashMap<String, Vec<String>>,
-    cache: TerminalPathCache
+    data: HashMap<String, Vec<String>>
 }
 impl DayElevenSolution {
     fn build_adjacency_matrix(&self) -> (Matrix<u64, nalgebra::Dyn, nalgebra::Dyn, nalgebra::VecStorage<u64, nalgebra::Dyn, nalgebra::Dyn>>, HashMap<&str, usize>) {
@@ -78,7 +46,7 @@ impl Solution for DayElevenSolution {
     const DAY: u8 = 11;
 
     fn new() -> Self {
-        DayElevenSolution { data: parse_input(&Self::read_data_to_vec().unwrap()), cache: TerminalPathCache::new(&parse_input(&Self::read_data_to_vec().unwrap())) }
+        DayElevenSolution { data: parse_input(&Self::read_data_to_vec().unwrap()) }
     }
 
     fn part_one(&self) -> u32 {
@@ -128,8 +96,7 @@ mod tests {
             .collect::<Vec<String>>();
 
         let day_eleven = DayElevenSolution {
-            data: parse_input(&test_vec),
-            cache: TerminalPathCache::new(&parse_input(&test_vec))
+            data: parse_input(&test_vec)
         };
         let sol = day_eleven.part_one();
         assert_eq!(5, sol);
@@ -144,8 +111,7 @@ mod tests {
             .collect::<Vec<String>>();
 
         let day_eleven = DayElevenSolution {
-            data: parse_input(&test_vec),
-            cache: TerminalPathCache::new(&parse_input(&test_vec))
+            data: parse_input(&test_vec)
         };
         let sol = day_eleven.part_two();
 
