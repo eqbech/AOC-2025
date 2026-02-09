@@ -4,20 +4,20 @@ use crate::Solution;
 
 #[derive(Debug, PartialEq, Eq, PartialOrd, Clone, Copy, Ord, Hash)]
 struct Point {
-    x: i32,
-    y: i32,
+    x: u32,
+    y: u32,
 }
 
 impl Point {
     fn area(&self, other: &Point) -> u64 {
-        ((self.x - other.x).abs() + 1) as u64 * ((self.y - other.y).abs() + 1) as u64
+        (self.x.abs_diff(other.x) + 1) as u64 * (self.y.abs_diff(other.y) + 1) as u64
     }
 }
 
 #[derive(Debug)]
-struct TileArea<'a> {
-    point_a: &'a Point,
-    point_b: &'a Point,
+struct TileArea {
+    point_a: Point,
+    point_b: Point,
     area: u64,
 }
 #[derive(Debug)]
@@ -27,7 +27,7 @@ struct Corners {
     bottom_left: Point,
     bottom_right: Point,
 }
-impl<'a> TileArea<'a> {
+impl TileArea {
     /// Returns in order x1, x2, y1, y2
     fn get_edges(&self) -> Corners {
         let min_x = self.point_a.x.min(self.point_b.x);
@@ -42,26 +42,26 @@ impl<'a> TileArea<'a> {
             bottom_right: Point { x: max_x, y: max_y },
         }
     }
-    fn get_dimensions(&self) -> (i32, i32) {
-        let width = (self.point_a.x - self.point_b.x).abs() + 1;
-        let height = (self.point_a.y - self.point_b.y).abs() + 1;
+    fn get_dimensions(&self) -> (u32, u32) {
+        let width = self.point_a.x.abs_diff(self.point_b.x) + 1;
+        let height = self.point_a.y.abs_diff(self.point_b.y) + 1;
         (width, height)
     }
 }
 
-impl<'a> Ord for TileArea<'a> {
+impl Ord for TileArea {
     fn cmp(&self, other: &Self) -> std::cmp::Ordering {
         self.area.cmp(&other.area)
     }
 }
 
-impl<'a> PartialOrd for TileArea<'a> {
+impl PartialOrd for TileArea {
     fn partial_cmp(&self, other: &Self) -> Option<std::cmp::Ordering> {
         Some(self.cmp(other))
     }
 }
 
-impl<'a> PartialEq for TileArea<'a> {
+impl PartialEq for TileArea {
     fn eq(&self, other: &Self) -> bool {
         self.area == other.area
             && self.point_a.x == other.point_a.x
@@ -71,7 +71,7 @@ impl<'a> PartialEq for TileArea<'a> {
     }
 }
 
-impl<'a> Eq for TileArea<'a> {}
+impl Eq for TileArea {}
 
 pub struct DayNineSolution {
     data: Vec<Point>,
@@ -115,15 +115,15 @@ impl Solution for DayNineSolution {
             &mut loops,
         );
         assert_eq!(loops.len(), 2);
-        let points: &Vec<Point> = &loops[0];
+        let points: &[Point] = &loops[0];
 
         // Remove points inbetween points on the same row / column
-        let mut valid_points: Vec<&Point> = Vec::with_capacity(points.len());
-        valid_points.push(&points[0]);
+        let mut valid_points: Vec<Point> = Vec::with_capacity(points.len());
+        valid_points.push(points[0]);
         let mut i = 1;
         while i < points.len() {
             if i + 1 >= points.len() {
-                valid_points.push(&points[i]);
+                valid_points.push(points[i]);
                 break;
             }
             let curr = &points[i];
@@ -140,7 +140,7 @@ impl Solution for DayNineSolution {
                 continue;
             }
 
-            valid_points.push(curr);
+            valid_points.push(*curr);
             i += 1;
         }
         let mut boundary_points: HashSet<Point> = HashSet::with_capacity(valid_points.len());
@@ -180,32 +180,25 @@ impl Solution for DayNineSolution {
                 boundary_points.insert(Point { x, y: special_a.y });
             }
         }
-        let mut y_map: HashMap<i32, (i32, i32)> = HashMap::with_capacity(boundary_points.len());
-        let mut x_map: HashMap<i32, (i32, i32)> = HashMap::with_capacity(boundary_points.len());
+        let mut y_map: HashMap<u32, (u32, u32)> = HashMap::with_capacity(boundary_points.len());
+        let mut x_map: HashMap<u32, (u32, u32)> = HashMap::with_capacity(boundary_points.len());
         for point in &boundary_points {
-            let y_entry = y_map.entry(point.y).or_insert((i32::MAX, 0));
-            if point.x < y_entry.0 {
-                y_entry.0 = point.x;
-            }
-            if point.x > y_entry.1 {
-                y_entry.1 = point.x;
-            }
-            let x_entry = x_map.entry(point.x).or_insert((i32::MAX, 0));
-            if point.y < x_entry.0 {
-                x_entry.0 = point.y;
-            }
-            if point.y > x_entry.1 {
-                x_entry.1 = point.y;
-            }
+            let y_entry = y_map.entry(point.y).or_insert((u32::MAX, 0));
+            y_entry.0 = y_entry.0.min(point.x);
+            y_entry.1 = y_entry.1.max(point.x);
+            let x_entry = x_map.entry(point.x).or_insert((u32::MAX, 0));
+            x_entry.0 = x_entry.0.min(point.y);
+            x_entry.1 = x_entry.1.max(point.y);
         }
+
         let mut tile_areas = Vec::with_capacity(valid_points.len() * valid_points.len());
         let mut y = 0;
         while y < valid_points.len() {
             let mut x = y + 1;
             while x < valid_points.len() {
                 tile_areas.push(TileArea {
-                    point_a: &valid_points[y],
-                    point_b: &valid_points[x],
+                    point_a: valid_points[y],
+                    point_b: valid_points[x],
                     area: valid_points[y].area(&valid_points[x]),
                 });
                 x += 1;
@@ -214,75 +207,61 @@ impl Solution for DayNineSolution {
         }
         tile_areas.sort_by(|a, b| b.cmp(a));
         assert!(tile_areas[0].area > tile_areas[1].area);
-        println!("Total tile areas: {}", tile_areas.len());
-        tile_areas.iter().enumerate().find(|(i,t)| {
-            if is_area_valid_greedy(&x_map, &y_map, t) {
-                println!("Found valid area at index {}: {:?}", i, t);
-                return true;
-            }
-            false
-        }).unwrap().1.area
-        
+        tile_areas
+            .iter()
+            .find(|t| is_area_valid(&x_map, &y_map, t))
+            .unwrap()
+            .area
     }
-} 
+}
+
 /// ## NB
 /// This is very costly and is called a lot of times, this is where 90% of performance can be saved.
 /// Consider caching out of bounds sections.
 fn is_area_valid(
-    x_map: &HashMap<i32, (i32, i32)>,
-    y_map: &HashMap<i32, (i32, i32)>,
+    x_map: &HashMap<u32, (u32, u32)>,
+    y_map: &HashMap<u32, (u32, u32)>,
     tile_area: &TileArea,
 ) -> bool {
     let edges = tile_area.get_edges();
     let (width, height) = tile_area.get_dimensions();
 
     // check out of bounds X
-    for y in edges.top_left.y..(edges.top_left.y + height) {
-        if edges.top_left.x < y_map.get(&y).unwrap().0
-            || edges.top_right.x > y_map.get(&y).unwrap().1
-        {
+    let mut prev_x_bounds = y_map.get(&edges.top_left.y).unwrap();
+    if edges.top_left.x < prev_x_bounds.0 || edges.top_right.x > prev_x_bounds.1 {
+        return false;
+    }
+    for y in edges.top_left.y + 1..(edges.top_left.y + height) {
+        let curr_x_bounds = y_map.get(&y).unwrap();
+        if prev_x_bounds == curr_x_bounds {
+            continue;
+        }
+        if edges.top_left.x < curr_x_bounds.0 || edges.top_right.x > curr_x_bounds.1 {
             return false;
         }
+        prev_x_bounds = curr_x_bounds;
     }
     // check out of bounds Y
+    let mut prev_y_bounds = x_map.get(&edges.top_left.x).unwrap();
+    if edges.top_left.y < prev_y_bounds.0 || edges.bottom_left.y > prev_y_bounds.1 {
+        return false;
+    }
     for x in edges.top_left.x..(edges.top_left.x + width) {
+        let curr_y_bounds = x_map.get(&x).unwrap();
+        if prev_y_bounds == curr_y_bounds {
+            continue;
+        }
         if edges.top_left.y < x_map.get(&x).unwrap().0
             || edges.top_right.y > x_map.get(&x).unwrap().1
         {
             return false;
         }
+        prev_y_bounds = curr_y_bounds;
     }
 
     true
 }
-/// Greedy is area valid function. Assumes circle shape of area bounds so restrict to checking corner cords only.
-fn is_area_valid_greedy(
-    x_map: &HashMap<i32, (i32, i32)>,
-    y_map: &HashMap<i32, (i32, i32)>,
-    tile_area: &TileArea,
-) -> bool {
-    let corners = tile_area.get_edges();
-    // let (width, height) = tile_area.get_dimensions();
 
-    // Top Left
-    if corners.top_left.x < y_map.get(&corners.top_left.y).unwrap().0 || corners.top_left.y > x_map.get(&corners.top_left.x).unwrap().1 {
-        return false;
-    }
-    // Bottom Left
-    if corners.bottom_left.x < y_map.get(&corners.bottom_left.y).unwrap().0 || corners.bottom_left.y > x_map.get(&corners.bottom_left.x).unwrap().1 {
-        return false;
-    }
-    // Top Right
-    if corners.top_right.x > y_map.get(&corners.top_right.y).unwrap().1 || corners.top_right.y > x_map.get(&corners.top_right.x).unwrap().1 {
-        return false;
-    }
-    // Bottom Right
-    if corners.bottom_right.x > y_map.get(&corners.bottom_right.y).unwrap().1 || corners.bottom_right.y > x_map.get(&corners.bottom_right.x).unwrap().1 {
-        return false;
-    }
-
-    true
-}
 // Todo now traverse both direction of loop only need to go one way...
 fn get_loops(
     start: &Point,
@@ -358,13 +337,13 @@ fn get_loops(
     return;
 }
 
-fn parse_input(input: &Vec<String>) -> Vec<Point> {
+fn parse_input(input: &[String]) -> Vec<Point> {
     input
         .iter()
         .map(|line| {
-            let coords: Vec<i32> = line
+            let coords: Vec<u32> = line
                 .split(',')
-                .map(|part| part.trim().parse::<i32>().unwrap())
+                .map(|part| part.trim().parse::<u32>().unwrap())
                 .collect();
             Point {
                 x: coords[0],
