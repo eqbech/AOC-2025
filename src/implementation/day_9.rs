@@ -115,15 +115,15 @@ impl Solution for DayNineSolution {
             &mut loops,
         );
         assert_eq!(loops.len(), 2);
-        let mut points = loops[0].clone();
+        let points: &Vec<Point> = &loops[0];
 
         // Remove points inbetween points on the same row / column
-        let mut valid_points: Vec<Point> = Vec::with_capacity(points.len());
-        valid_points.push(points[0]);
+        let mut valid_points: Vec<&Point> = Vec::with_capacity(points.len());
+        valid_points.push(&points[0]);
         let mut i = 1;
         while i < points.len() {
             if i + 1 >= points.len() {
-                valid_points.push(points[i].clone());
+                valid_points.push(&points[i]);
                 break;
             }
             let curr = &points[i];
@@ -131,29 +131,29 @@ impl Solution for DayNineSolution {
             let next = &points[i + 1];
 
             if prev.x == curr.x && curr.x == next.x {
-                points.remove(i);
+                i += 1;
                 continue;
             }
 
             if prev.y == curr.y && curr.y == next.y {
-                points.remove(i);
+                i += 1;
                 continue;
             }
 
-            valid_points.push(curr.clone());
+            valid_points.push(curr);
             i += 1;
         }
-        let mut boundary_points: Vec<Point> = Vec::with_capacity(valid_points.len());
+        let mut boundary_points: HashSet<Point> = HashSet::with_capacity(valid_points.len());
         for (a, b) in valid_points.iter().zip(valid_points.iter().skip(1)) {
             if a.x == b.x {
                 let range = if a.y < b.y { a.y..=b.y } else { b.y..=a.y };
                 for y in range {
-                    boundary_points.push(Point { x: a.x, y });
+                    boundary_points.insert(Point { x: a.x, y });
                 }
             } else if a.y == b.y {
                 let range = if a.x < b.x { a.x..=b.x } else { b.x..=a.x };
                 for x in range {
-                    boundary_points.push(Point { x, y: a.y });
+                    boundary_points.insert(Point { x, y: a.y });
                 }
             }
         }
@@ -168,7 +168,7 @@ impl Solution for DayNineSolution {
                 special_b.y..=special_a.y
             };
             for y in range {
-                boundary_points.push(Point { x: special_a.x, y });
+                boundary_points.insert(Point { x: special_a.x, y });
             }
         } else if special_a.y == special_b.y {
             let range = if special_a.x < special_b.x {
@@ -177,13 +177,11 @@ impl Solution for DayNineSolution {
                 special_b.x..=special_a.x
             };
             for x in range {
-                boundary_points.push(Point { x, y: special_a.y });
+                boundary_points.insert(Point { x, y: special_a.y });
             }
         }
-        let hased: HashSet<Point> = HashSet::from_iter(boundary_points.into_iter());
-        boundary_points = hased.iter().cloned().collect::<Vec<Point>>();
-        let mut y_map: HashMap<i32, (i32, i32)> = HashMap::new();
-        let mut x_map: HashMap<i32, (i32, i32)> = HashMap::new();
+        let mut y_map: HashMap<i32, (i32, i32)> = HashMap::with_capacity(boundary_points.len());
+        let mut x_map: HashMap<i32, (i32, i32)> = HashMap::with_capacity(boundary_points.len());
         for point in &boundary_points {
             let y_entry = y_map.entry(point.y).or_insert((i32::MAX, 0));
             if point.x < y_entry.0 {
@@ -200,34 +198,36 @@ impl Solution for DayNineSolution {
                 x_entry.1 = point.y;
             }
         }
-
-        let mut largest_area = 0;
+        let mut tile_areas = Vec::with_capacity(valid_points.len() * valid_points.len());
         let mut y = 0;
         while y < valid_points.len() {
             let mut x = y + 1;
             while x < valid_points.len() {
-                let t = TileArea {
+                tile_areas.push(TileArea {
                     point_a: &valid_points[y],
                     point_b: &valid_points[x],
                     area: valid_points[y].area(&valid_points[x]),
-                };
-                if t.area <= largest_area {
-                    x += 1;
-                    continue;
-                }
-                if is_area_valid(&x_map, &y_map, &t) {
-                    if t.area > largest_area {
-                        largest_area = t.area;
-                    }
-                }
+                });
                 x += 1;
             }
             y += 1;
         }
-        largest_area
+        tile_areas.sort_by(|a, b| b.cmp(a));
+        assert!(tile_areas[0].area > tile_areas[1].area);
+        println!("Total tile areas: {}", tile_areas.len());
+        tile_areas.iter().enumerate().find(|(i,t)| {
+            if is_area_valid_greedy(&x_map, &y_map, t) {
+                println!("Found valid area at index {}: {:?}", i, t);
+                return true;
+            }
+            false
+        }).unwrap().1.area
+        
     }
-}
-
+} 
+/// ## NB
+/// This is very costly and is called a lot of times, this is where 90% of performance can be saved.
+/// Consider caching out of bounds sections.
 fn is_area_valid(
     x_map: &HashMap<i32, (i32, i32)>,
     y_map: &HashMap<i32, (i32, i32)>,
@@ -251,6 +251,34 @@ fn is_area_valid(
         {
             return false;
         }
+    }
+
+    true
+}
+/// Greedy is area valid function. Assumes circle shape of area bounds so restrict to checking corner cords only.
+fn is_area_valid_greedy(
+    x_map: &HashMap<i32, (i32, i32)>,
+    y_map: &HashMap<i32, (i32, i32)>,
+    tile_area: &TileArea,
+) -> bool {
+    let corners = tile_area.get_edges();
+    // let (width, height) = tile_area.get_dimensions();
+
+    // Top Left
+    if corners.top_left.x < y_map.get(&corners.top_left.y).unwrap().0 || corners.top_left.y > x_map.get(&corners.top_left.x).unwrap().1 {
+        return false;
+    }
+    // Bottom Left
+    if corners.bottom_left.x < y_map.get(&corners.bottom_left.y).unwrap().0 || corners.bottom_left.y > x_map.get(&corners.bottom_left.x).unwrap().1 {
+        return false;
+    }
+    // Top Right
+    if corners.top_right.x > y_map.get(&corners.top_right.y).unwrap().1 || corners.top_right.y > x_map.get(&corners.top_right.x).unwrap().1 {
+        return false;
+    }
+    // Bottom Right
+    if corners.bottom_right.x > y_map.get(&corners.bottom_right.y).unwrap().1 || corners.bottom_right.y > x_map.get(&corners.bottom_right.x).unwrap().1 {
+        return false;
     }
 
     true
