@@ -86,7 +86,7 @@ fn benchmark_aoc_day_nine(c: &mut Criterion) {
     let day_nine = DayNineSolution::new();
     let mut group = c.benchmark_group("9");
 
-    // group.bench_function("Solution one", |b| b.iter(|| day_nine.part_one()));
+    group.bench_function("Solution one", |b| b.iter(|| day_nine.part_one()));
     group.bench_function("Solution two", |b| b.iter(|| day_nine.part_two()));
     group.finish();
 }

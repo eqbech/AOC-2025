@@ -17,10 +17,10 @@ impl Solution for DayThreeSolution {
         // Sum two batteries in each pack
         let mut sum = 0;
         for pack in &self.data {
-            let mut first_digit = b'0';
-            let mut last_digit = b'0';
+            let mut first_digit = pack[0];
+            let mut last_digit = pack[1];
             let mut first_digit_pos = 0;
-            let mut i = 0;
+            let mut i = 1;
             while i < pack.len() {
                 if first_digit == b'9' {
                     if last_digit == b'9' {
